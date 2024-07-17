@@ -100,6 +100,9 @@ func queueAndBuild(
 		if chainConfig.cloneKeyOverride != "" {
 			chainNodeConfig.CloneKey = chainConfig.cloneKeyOverride
 		}
+		if chainConfig.patOverride != "" {
+			chainNodeConfig.PAT = chainConfig.patOverride
+		}
 		if chainConfig.buildTargetOverride != "" {
 			chainNodeConfig.BuildTarget = chainConfig.buildTargetOverride
 		}
@@ -143,6 +146,7 @@ func queueAndBuild(
 				GithubOrganization: chainConfig.orgOverride,
 				GithubRepo:         chainConfig.repoOverride,
 				CloneKey:           chainConfig.cloneKeyOverride,
+				PAT:                chainConfig.patOverride,
 				Dockerfile:         builder.DockerfileType(chainConfig.dockerfileOverride),
 				PreBuild:           chainConfig.preBuildOverride,
 				BuildTarget:        chainConfig.buildTargetOverride,

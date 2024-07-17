@@ -18,6 +18,7 @@ import (
 	"github.com/go-git/go-billy/v5/memfs"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"github.com/go-git/go-git/v5/plumbing/transport/ssh"
 	"github.com/go-git/go-git/v5/storage/memory"
 	internalssh "golang.org/x/crypto/ssh"
@@ -156,6 +157,7 @@ func getModFile(
 	organization string,
 	repoName string,
 	cloneKey string,
+	pat string,
 	ref string,
 	buildDir string,
 	local bool,
@@ -182,6 +184,10 @@ func getModFile(
 		}
 		// Try as tag ref first
 		cloneOpts.ReferenceName = plumbing.NewTagReferenceName(ref)
+
+		if cloneKey != "" && pat != "" {
+			return nil, errors.New("cannot use both `clone-key` and `pat`; select one")
+		}
 		// if there is a clone key, decode and use it to authenticate
 		if cloneKey != "" {
 			cloneKeyBz, err := base64.StdEncoding.DecodeString(cloneKey)
@@ -197,6 +203,14 @@ func getModFile(
 
 			cloneOpts.URL = fmt.Sprintf("git@%s:%s/%s.git", repoHost, organization, repoName)
 			cloneOpts.Auth = key
+		}
+		// if there is a personal access token, use it to authenticate
+		if pat != "" {
+			patAuth := &http.BasicAuth{
+				Username: "user",
+				Password: pat,
+			}
+			cloneOpts.Auth = patAuth
 		}
 
 		// Clone into memory
@@ -374,7 +388,7 @@ func (h *HeighlinerBuilder) buildChainNodeDockerImage(
 
 	modFile, err := getModFile(
 		repoHost, chainConfig.Build.GithubOrganization, chainConfig.Build.GithubRepo,
-		chainConfig.Build.CloneKey, chainConfig.Ref, chainConfig.Build.BuildDir, h.local,
+		chainConfig.Build.CloneKey, chainConfig.Build.PAT, chainConfig.Ref, chainConfig.Build.BuildDir, h.local,
 	)
 
 	goVersion := buildCfg.GoVersion

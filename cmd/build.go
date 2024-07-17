@@ -26,6 +26,7 @@ type chainConfigFlags struct {
 	repoOverride        string
 	repoHostOverride    string
 	cloneKeyOverride    string
+	patOverride         string
 	dockerfileOverride  string
 	buildDirOverride    string
 	preBuildOverride    string
@@ -43,6 +44,7 @@ const (
 	flagRepo          = "repo"
 	flagRepoHost      = "repo-host"
 	flagCloneKey      = "clone-key"
+	flagPAT           = "pat"
 	flagGitRef        = "git-ref"
 	flagDockerfile    = "dockerfile"
 	flagBuildDir      = "build-dir"
@@ -153,6 +155,7 @@ An optional flag --tag/-t is now available to override the resulting docker imag
 	buildCmd.PersistentFlags().StringVar(&chainConfig.repoOverride, flagRepo, "", "github-repo override for building from a fork")
 	buildCmd.PersistentFlags().StringVar(&chainConfig.repoHostOverride, flagRepoHost, "", "repo-host Git repository host override for building from a fork")
 	buildCmd.PersistentFlags().StringVar(&chainConfig.cloneKeyOverride, flagCloneKey, "", "base64 encoded ssh key to authenticate")
+	buildCmd.PersistentFlags().StringVar(&chainConfig.patOverride, flagPAT, "", "personal access token used to authenticate")
 	buildCmd.PersistentFlags().StringVar(&chainConfig.dockerfileOverride, flagDockerfile, "", "dockerfile override (cosmos, cargo, imported, none)")
 	buildCmd.PersistentFlags().StringVar(&chainConfig.buildDirOverride, flagBuildDir, "", "build-dir override - repo relative directory to run build target")
 	buildCmd.PersistentFlags().StringVar(&chainConfig.preBuildOverride, flagPreBuild, "", "pre-build override - command(s) to run prior to build-target")
